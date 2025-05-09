@@ -2,7 +2,7 @@ import { useVoteMutation } from '@/features/blockchain/blockApi';
 import { useGetAllGigsQuery } from '@/features/gig/gigAPI';
 import { RootState } from '@/features/store';
 import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const arbitrators = [
@@ -38,6 +38,7 @@ const ArbiterPage = () => {
     return (
         isArbiter && (
             <div className="gap_section flex flex-col items-center justify-center min-h-screen">
+            <ToastContainer aria-label={undefined} />
                 <h1 className="text-2xl font-bold mb-4">Arbiter Voting Panel</h1>
                 <Table className="w-3/4">
                     <TableHeader>
