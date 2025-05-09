@@ -3,7 +3,7 @@ import { FreelancerProposal, Gig, Proposal } from "./types";
 
 export const gigAPI = createApi ({
     reducerPath: "gigAPI",
-    baseQuery: fetchBaseQuery({ baseUrl: `http://localhost:9999/api/gig`}),
+    baseQuery: fetchBaseQuery({ baseUrl: `https://dlancer.onrender.com/api/gig`}),
     endpoints: (builder) => ({
 
         getGigsByWallet: builder.query<Gig[], string>({
