@@ -1,0 +1,18 @@
+{
+    "84532": {
+        "mockUSDC": {
+            "address": "0xfFC6Eb832dcab0B940342Fedf3631B9d132a11bE"
+        },
+        "EscrowFactory": {
+            "address": "0xC2b9c0039E41608C80d6D7fA3663e3Fc05a0B867"
+        }
+    },
+    "53": {
+        "mockUSDC": {
+            "address": "0xf5A3939b2d8aF698Eb2270A461eb6767455Af99b"
+        },
+        "EscrowFactory": {
+            "address": "0x06fb68338E8647D3a5cF128fB0fb5A9782434046"
+        }
+    }
+}

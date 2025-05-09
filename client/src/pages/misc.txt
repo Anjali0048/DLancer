@@ -1,0 +1,34 @@
+<Card className="p-6">
+      <h2 className="text-xl font-semibold mb-4">Client Dashboard</h2>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Title</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Price ($)</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Created At</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {
+            gigs.map((gig) => (
+            <TableRow key={gig.walletAddress}>
+              <TableCell>{gig.title}</TableCell>
+              <TableCell>{gig.category}</TableCell>
+              <TableCell>{gig.price}</TableCell>
+              <TableCell>{gig.freelancerAddress}</TableCell>
+              <TableCell>
+                {/* <Badge variant={gig.status === "Completed" ? "success" : gig.status === "In Progress" ? "warning" : "destructive"}>
+                  {gig.status}
+                </Badge> */}
+              </TableCell>
+              <TableCell>{gig.createdAt}</TableCell>
+            </TableRow>
+            ))
+          }
+        </TableBody>
+        
+      </Table>
+    </Card>
