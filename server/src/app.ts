@@ -4,17 +4,13 @@ import cookieParser from "cookie-parser";
 import connectDB from './utils/dbConnect';
 import userRoute from './routes/userRoute'
 import gigRoute from './routes/gigRoute'
-import path from 'path';
-import { fileURLToPath } from 'url';
+// import path from 'path';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 // const distPath = path.join(__dirname, "dist");
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const distPath = path.join(__dirname, 'dist');
-app.use(express.static(distPath));
+// app.use(express.static(distPath));
 
 app.use(cors());
 app.use(express.json());

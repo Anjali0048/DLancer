@@ -15,11 +15,11 @@ export const authenticate = async (req: Request, res: Response): Promise<any | u
   }
 
   try {
-    let user: IUser | null = await User.findOne({ walletAddress });
+    let user = await User.findOne({ walletAddress });
 
     if (!user) {
       user = new User({ walletAddress, role });
-      await user.save();
+      await (user as any).save();
       
     const token = jwt.sign({ walletAddress, role }, SECRET_KEY, {
       expiresIn: "120h",

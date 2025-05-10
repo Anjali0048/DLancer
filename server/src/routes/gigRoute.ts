@@ -1,6 +1,5 @@
 import express from "express"
 import { acceptProposal, addFreelancerAddress, addGig, editGig, getGigsByWallet, getGigData, getProposals, getUserAuthGigs, submitProposal, getAllGigData, getProposalsByWalletAddress } from "../controllers/GigController";
-import { authTokenVerification } from "../middleware/authMiddleware";
 
 const router = express.Router()
 

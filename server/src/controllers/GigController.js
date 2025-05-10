@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,12 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProposalsByWalletAddress = exports.getProposals = exports.acceptProposal = exports.submitProposal = exports.editGig = exports.getAllGigData = exports.getGigsByWallet = exports.getGigData = exports.getUserAuthGigs = exports.addFreelancerAddress = exports.addGig = void 0;
-const GigSchema_1 = require("../models/GigSchema");
-const addGig = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+import { Gig } from "../models/GigSchema";
+import mongoose from "mongoose";
+export const addGig = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const gig = new GigSchema_1.Gig(req.body);
+        const gig = new Gig(req.body);
         const savedGig = yield gig.save();
         res.status(201).json(savedGig);
     }
@@ -22,33 +20,33 @@ const addGig = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ error: error.message });
     }
 });
-exports.addGig = addGig;
-const addFreelancerAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const addFreelancerAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { gigId, freelancerAddress } = req.body;
     try {
-        const updatedGig = yield GigSchema_1.Gig.findByIdAndUpdate(gigId, { freelancerAddress }, { new: true });
+        const updatedGig = yield Gig.findByIdAndUpdate(gigId, { freelancerAddress }, { new: true });
         res.status(200).json(updatedGig);
     }
     catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
-exports.addFreelancerAddress = addFreelancerAddress;
-const getUserAuthGigs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const getUserAuthGigs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { walletAddress } = req.params;
     try {
-        const gigs = yield GigSchema_1.Gig.find({ walletAddress });
+        const gigs = yield Gig.find({ walletAddress });
         res.status(200).json(gigs);
     }
     catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
-exports.getUserAuthGigs = getUserAuthGigs;
-const getGigData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const getGigData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { gigId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
     try {
-        const gig = yield GigSchema_1.Gig.findById(gigId);
+        const gig = yield Gig.findById(gigId);
         if (!gig) {
             return res.status(404).json({ message: "Gig not found" });
         }
@@ -58,15 +56,14 @@ const getGigData = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(400).json({ error: error.message });
     }
 });
-exports.getGigData = getGigData;
-const getGigsByWallet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const getGigsByWallet = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { walletAddress } = req.params;
     if (!walletAddress || typeof walletAddress !== "string") {
         res.status(400).json({ message: "Invalid wallet address" });
         return;
     }
     try {
-        const gigs = yield GigSchema_1.Gig.find({ walletAddress: walletAddress });
+        const gigs = yield Gig.find({ walletAddress: walletAddress });
         if (gigs.length === 0) {
             res.status(404).json({ message: "No gigs found for this client" });
             return;
@@ -78,10 +75,9 @@ const getGigsByWallet = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
-exports.getGigsByWallet = getGigsByWallet;
-const getAllGigData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const getAllGigData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const gig = yield GigSchema_1.Gig.find();
+        const gig = yield Gig.find();
         if (!gig) {
             return res.status(404).json({ message: "Gig not found" });
         }
@@ -91,11 +87,13 @@ const getAllGigData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(400).json({ error: error.message });
     }
 });
-exports.getAllGigData = getAllGigData;
-const editGig = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const editGig = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { gigId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
     try {
-        const updatedGig = yield GigSchema_1.Gig.findByIdAndUpdate(gigId, req.body, { new: true });
+        const updatedGig = yield Gig.findByIdAndUpdate(gigId, req.body, { new: true });
         if (!updatedGig) {
             return res.status(404).json({ message: "Gig not found" });
         }
@@ -105,17 +103,19 @@ const editGig = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(400).json({ error: error.message });
     }
 });
-exports.editGig = editGig;
-const submitProposal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const submitProposal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { gigId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
     const { freelancerAddress, file } = req.body;
     // const file= req.file?.path; // use a middleware multer for file upload
     if (!file) {
         return res.status(400).json({ message: "File is required" });
     }
     try {
-        const gig = yield GigSchema_1.Gig.findById(gigId);
+        const gig = yield Gig.findById(gigId);
         if (!gig) {
             return res.status(404).json({ message: "Gig not found" });
         }
@@ -128,12 +128,14 @@ const submitProposal = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(500).json({ error: error.message });
     }
 });
-exports.submitProposal = submitProposal;
-const acceptProposal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const acceptProposal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const { gigId, proposalId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
     try {
-        const gig = yield GigSchema_1.Gig.findById(gigId);
+        const gig = yield Gig.findById(gigId);
         if (!gig) {
             return res.status(404).json({ message: "Gig not found" });
         }
@@ -156,11 +158,10 @@ const acceptProposal = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(500).json({ error: error.message });
     }
 });
-exports.acceptProposal = acceptProposal;
-const getProposals = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const getProposals = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { gigId } = req.params;
     try {
-        const gig = yield GigSchema_1.Gig.findById(gigId).select("proposals");
+        const gig = yield Gig.findById(gigId).select("proposals");
         if (!gig) {
             return res.status(404).json({ message: "Gig not found" });
         }
@@ -170,13 +171,12 @@ const getProposals = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         return res.status(500).json({ error: error.message });
     }
 });
-exports.getProposals = getProposals;
-const getProposalsByWalletAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+export const getProposalsByWalletAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { walletAddress } = req.params;
     try {
-        const gigs = yield GigSchema_1.Gig.find({ "proposals.freelancerAddress": walletAddress });
+        const gigs = yield Gig.find({ "proposals.freelancerAddress": walletAddress });
         // console.log("gigs: ",gigs)
-        const proposals = gigs.flatMap(gig => {
+        const proposals = gigs.flatMap((gig) => {
             var _a;
             return ((_a = gig.proposals) !== null && _a !== void 0 ? _a : [])
                 .filter((proposal) => proposal.freelancerAddress === walletAddress)
@@ -201,4 +201,3 @@ const getProposalsByWalletAddress = (req, res) => __awaiter(void 0, void 0, void
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });
-exports.getProposalsByWalletAddress = getProposalsByWalletAddress;

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { Gig, IProposal } from "../models/GigSchema";
+import { Gig, IGig, IProposal } from "../models/GigSchema";
+import mongoose from "mongoose";
 
 export const addGig = async (req: Request, res: Response) => {
     try {
@@ -38,6 +39,9 @@ export const getUserAuthGigs = async (req: Request, res: Response) => {
 
 export const getGigData = async (req: Request, res: Response): Promise<any | undefined> => {
     const { gigId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
     try {
         const gig = await Gig.findById(gigId);
         if (!gig) {
@@ -89,6 +93,9 @@ export const getAllGigData = async (req: Request, res: Response): Promise<any | 
 
 export const editGig = async (req: Request, res: Response): Promise<any | undefined> => {
     const { gigId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
     try {
         const updatedGig = await Gig.findByIdAndUpdate(
             gigId,
@@ -110,6 +117,9 @@ export const editGig = async (req: Request, res: Response): Promise<any | undefi
 
 export const submitProposal = async (req: Request, res: Response): Promise<any | undefined> => {
     const { gigId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
     const { freelancerAddress, file } = req.body;
     // const file= req.file?.path; // use a middleware multer for file upload
 
@@ -136,6 +146,9 @@ export const submitProposal = async (req: Request, res: Response): Promise<any |
 
 export const acceptProposal = async (req: Request, res: Response): Promise<any | undefined> => {
     const { gigId, proposalId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+        return res.status(400).json({ error: "Invalid ID" });
+    }
 
     try {
         const gig = await Gig.findById(gigId);
@@ -143,7 +156,7 @@ export const acceptProposal = async (req: Request, res: Response): Promise<any |
             return res.status(404).json({ message: "Gig not found" });
         }
 
-        const proposal = gig.proposals?.find((proposal) => (proposal)._id.toString() === proposalId);
+        const proposal = gig.proposals?.find((proposal: IProposal) => (proposal)._id.toString() === proposalId);
         if (!proposal) {
             return res.status(404).json({ message: "Proposal not found" });
         }
@@ -152,7 +165,7 @@ export const acceptProposal = async (req: Request, res: Response): Promise<any |
         gig.status = "assigned";
         gig.freelancerAddress = proposal.freelancerAddress;
 
-        gig.proposals?.forEach((p) => {
+        gig.proposals?.forEach((p: IProposal) => {
             if ((p as IProposal)._id.toString() !== proposalId) {
                 p.status = "rejected";
             }
@@ -186,7 +199,7 @@ export const getProposalsByWalletAddress = async (req: Request, res: Response): 
         const gigs = await Gig.find({ "proposals.freelancerAddress" : walletAddress });
         // console.log("gigs: ",gigs)
 
-        const proposals = gigs.flatMap(gig => {
+        const proposals = gigs.flatMap((gig: IGig) => {
             return (gig.proposals ?? []) 
                 .filter((proposal: any) => proposal.freelancerAddress === walletAddress)
                 .map((proposal: any) => ({
